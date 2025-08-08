@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Label Generator</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 20px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 40px;
+      }
+
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+      }
+
+      .form-box {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 420px;
+      }
+
+      .form-box h2 {
+        margin-top: 0;
+        color: #007bff;
+      }
+
+      label {
+        display: block;
+        margin-top: 15px;
+        font-weight: 500;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+
+      button {
+        padding: 10px 16px;
+        margin-top: 20px;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      button[type="submit"] {
+        background-color: #007bff;
+        color: white;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #0056b3;
+      }
+
+      .reset-form button {
+        background-color: #dc3545;
+        color: white;
+        margin-left: 10px;
+      }
+
+      .reset-form button:hover {
+        background-color: #b02a37;
+      }
+
+      .button-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+      }
+
+      a.download {
+        display: block;
+        margin-top: 20px;
+        color: #28a745;
+        font-weight: bold;
+        text-decoration: none;
+      }
+
+      a.download:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .form-box {
+          width: 100%;
+          max-width: 95%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>QR & Barcode / NPB Label Generator</h1>
+    <div class="container">
+      <!-- Form 1: Barcode + QR -->
+      <div class="form-box">
+        <h2>QR + Barcode</h2>
+        <form method="POST" action="/generate-barcode">
+          <label for="start">Start Number:</label>
+          <input type="number" name="start" required />
+
+          <label for="end">End Number:</label>
+          <input type="number" name="end" required />
+
+          <label for="prefix">Prefix (A, B, C):</label>
+          <input type="text" name="prefix" required />
+
+          <div class="button-row">
+            <button type="submit">Generate PDF</button>
+            {% if barcode_file %}
+            <form method="GET" action="/" class="reset-form">
+              <button type="submit">Reset</button>
+            </form>
+            {% endif %}
+          </div>
+        </form>
+
+        {% if barcode_file %}
+        <a class="download" href="{{ barcode_file }}" download>
+          📥 Download Barcode PDF
+        </a>
+        {% endif %}
+      </div>
+
+      <!-- Form 2: NPB -->
+      <div class="form-box">
+        <h2>NPB Label</h2>
+        <form method="POST" action="/generate-npb">
+          <label for="start">Start Number:</label>
+          <input type="number" name="start" required />
+
+          <label for="end">End Number:</label>
+          <input type="number" name="end" required />
+
+          <label for="prefix">Prefix (A, B, C):</label>
+          <input type="text" name="prefix" required />
+
+          <div class="button-row">
+            <button type="submit">Generate PDF</button>
+            {% if npb_file %}
+            <form method="GET" action="/" class="reset-form">
+              <button type="submit">Reset</button>
+            </form>
+            {% endif %}
+          </div>
+        </form>
+
+        {% if npb_file %}
+        <a class="download" href="{{ npb_file }}" download>
+          📥 Download NPB PDF
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>
