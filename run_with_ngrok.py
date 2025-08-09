@@ -1,15 +1,17 @@
-from flask import Flask, render_template, request, send_file, redirect, url_for
-import os
+from flask import Flask, render_template, request, redirect, url_for, send_file
+from flask_ngrok import run_with_ngrok
 from generate_labels import generate_labels
 from npb import generate_npb_labels
+import os
 
 app = Flask(__name__)
+run_with_ngrok(app)  # Ini akan otomatis expose localhost ke internet
+
 OUTPUT_FOLDER = "static"
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 @app.route("/", methods=["GET"])
 def index():
-    # Ambil nama file PDF dari query string (jika ada)
     barcode_file = request.args.get("barcode_file")
     npb_file = request.args.get("npb_file")
     return render_template("index.html", barcode_file=barcode_file, npb_file=npb_file)
@@ -24,9 +26,7 @@ def generate_barcode():
     output_path = os.path.join(OUTPUT_FOLDER, output_filename)
     generate_labels(start=start, end=end, output_file=output_path, prefix=prefix)
 
-    # Kirim ke template dalam format URL yang valid
     return redirect(url_for("index", barcode_file=f"static/{output_filename}"))
-
 
 @app.route("/generate-npb", methods=["POST"])
 def generate_npb():
@@ -41,6 +41,5 @@ def generate_npb():
 
     return redirect(url_for("index", npb_file=f"static/{output_filename}"))
 
-
 if __name__ == "__main__":
-    app.run(debug=True, port=8000)
+    app.run()
